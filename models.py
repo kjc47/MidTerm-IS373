@@ -1,7 +1,7 @@
 from datetime import datetime
 from sqlalchemy import Column, DateTime, Integer, String, create_engine, MetaData
 from sqlalchemy.orm import declarative_base, sessionmaker
-from factories import user_factory
+import os
 
 Base = declarative_base()
 
@@ -21,26 +21,43 @@ class UserModel(Base):
     def __repr__(self):
         return (
             f'UserModel (id={self.id}, first_name={self.first_name},'
-            f' last_name={self.last_name}, birth={self.birth},' 
-            f' created={self.created})'
+            f'last_name={self.last_name}, birth={self.birth},' 
+            f'created={self.created})'
         )
 
-engine = create_engine('sqlite:///models.db')
+DATABASE_URL = os.environ.get('DATABASE_URL', 'sqlite:///models.db')
+engine = create_engine(DATABASE_URL)
+
 Session = sessionmaker(bind=engine)
 
 def create_tables():
     Base.metadata.create_all(engine)
 
-def create_users(number_of_users=10):  # Default to generating 10 users
+def create_users():
     session = Session()
-    users = [user_factory(UserModel) for _ in range(number_of_users)]
-    session.add_all(users)
+    users = [
+        UserModel(first_name='Bob', last_name='Preston', birth=datetime(1980, 5, 2)),
+        UserModel(first_name='Susan', last_name='Sage', birth=datetime(1979, 6, 12)),
+    ]
+    for user in users:
+        session.add(user)
     session.commit()
     session.close()
+
+def seed_users(n=10):
+    from factories import user_factory
+    session = Session()
+    for _ in range(n):
+        user = user_factory(UserModel)
+        session.add(user)
+    session.commit()
+    session.close()
+
 
 if __name__ == "__main__":
     create_tables()
     create_users()
+    seed_users()
 
     session = Session()
     user_records = session.query(UserModel).all()
