@@ -1,18 +1,7 @@
 from datetime import datetime
 from sqlalchemy import Column, DateTime, Integer, String, create_engine, MetaData
 from sqlalchemy.orm import declarative_base, sessionmaker
-# ---- Add the factory code here ----
-from faker import Faker
-
-fake = Faker()
-
-def user_factory():
-    return UserModel(
-        first_name=fake.first_name(),
-        last_name=fake.last_name(),
-        birth=fake.date_of_birth()
-    )
-# -----------------------------------
+from factories import user_factory
 
 
 Base = declarative_base()
