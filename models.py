@@ -13,6 +13,11 @@ class UserModel(Base):
     birth = Column(DateTime)
     created = Column(DateTime, default=datetime.utcnow)
     
+    @property
+    def full_name(self):
+        return f'{self.first_name} {self.last_name}'
+    
+    
     def __repr__(self):
         return (
             f'UserModel (id={self.id}, first_name={self.first_name},'
@@ -44,5 +49,5 @@ if __name__ == "__main__":
     session = Session()
     user_records = session.query(UserModel).all()
     for user in user_records:
-        print(user)
+        print(user.full_name)
     session.close()
