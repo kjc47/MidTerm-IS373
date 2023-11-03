@@ -1,10 +1,8 @@
-# factories.py
 from faker import Faker
-from models import UserModel
 
 fake = Faker()
 
-def user_factory():
+def user_factory(UserModel):  # Notice UserModel is now a parameter
     return UserModel(
         first_name=fake.first_name(),
         last_name=fake.last_name(),
