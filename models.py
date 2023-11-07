@@ -36,8 +36,7 @@ def create_tables():
 def create_users():
     session = Session()
     users = [
-        UserModel(first_name='Bob', last_name='Preston', birth=datetime(1980, 5, 2)),
-        UserModel(first_name='Susan', last_name='Sage', birth=datetime(1979, 6, 12)),
+        
     ]
     for user in users:
         session.add(user)
