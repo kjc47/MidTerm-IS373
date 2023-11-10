@@ -33,10 +33,14 @@ Session = sessionmaker(bind=engine)
 def create_tables():
     Base.metadata.create_all(engine)
 
+def drop_tables():
+    """Drop all tables in the database."""
+    Base.metadata.drop_all(engine)
+
 def create_users():
     session = Session()
     users = [
-        
+        # Add user instances here if needed
     ]
     for user in users:
         session.add(user)
@@ -44,7 +48,7 @@ def create_users():
     session.close()
 
 def seed_users(n=10):
-    from factories import user_factory
+    from factories import user_factory  # Ensure you have this factory module available
     session = Session()
     for _ in range(n):
         user = user_factory(UserModel)
@@ -52,12 +56,16 @@ def seed_users(n=10):
     session.commit()
     session.close()
 
-
 if __name__ == "__main__":
+    # Uncomment the line below to drop tables
+    # drop_tables()
+
+    # Create and seed tables
     create_tables()
     create_users()
     seed_users()
 
+    # Print all user full names
     session = Session()
     user_records = session.query(UserModel).all()
     for user in user_records:
