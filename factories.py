@@ -1,5 +1,8 @@
 from faker import Faker
 from datetime import datetime
+# Assuming your models.py and factories.py are in the same directory
+from models import UserModel, TodoModel
+
 
 fake = Faker()
 
