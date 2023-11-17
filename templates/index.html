@@ -8,7 +8,6 @@
     <!-- User List -->
     <h1>Users</h1>
     <ul>
-        <!-- Loop through each user and display -->
         {% for user in users %}
             <li>{{ user.full_name }} - <a href="/users/{{ user.id }}">View</a></li>
         {% endfor %}
@@ -17,10 +16,18 @@
     <!-- Todo List -->
     <h1>Todos</h1>
     <ul>
-        <!-- Loop through each todo and display -->
         {% for todo in todos %}
             <li>{{ todo.title }} - <a href="/todos/{{ todo.id }}">View</a></li>
         {% endfor %}
     </ul>
+
+    <!-- Form for adding a new Todo -->
+    <h2>Add a new Todo</h2>
+    <form method="POST" action="/todos/create">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
+        <label for="title">Title:</label>
+        <input type="text" id="title" name="title" required>
+        <input type="submit" value="Submit">
+    </form>
 </body>
 </html>
