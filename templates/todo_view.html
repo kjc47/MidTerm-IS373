@@ -5,17 +5,26 @@
     <title>Todo Details</title>
 </head>
 <body>
-    <!-- Display the title of the todo -->
-    <h1>Todo: {{ todo.title }}</h1>
+    {% if todo %}
+        <!-- Display the title of the todo -->
+        <h1>Todo: {{ todo.title }}</h1>
 
-    <!-- Display the description of the todo -->
-    <p>Description: {{ todo.description }}</p>
+        <!-- Display the description of the todo -->
+        <p>Description: {{ todo.description }}</p>
 
-    <!-- Display the completion status of the todo -->
-    <p>Status: {{ 'Completed' if todo.completed else 'Not Completed' }}</p>
+        <!-- Display the completion status of the todo -->
+        <p>Status: {{ 'Completed' if todo.completed else 'Not Completed' }}</p>
 
-    <!-- Display the creation date of the todo -->
-    <!-- If you store datetime in UTC and want to format it in a readable way -->
-    <p>Created: {{ todo.created.strftime('%Y-%m-%d %H:%M:%S') if todo.created else 'Unknown' }}</p>
+        <!-- Display the creation date of the todo -->
+        <p>Created: {{ todo.created.strftime('%Y-%m-%d %H:%M:%S') if todo.created else 'Unknown' }}</p>
+
+        <!-- Optional: Links for updating and deleting the todo -->
+        <p><a href="{{ url_for('update_todo', todo_id=todo.id) }}">Edit Todo</a></p>
+        <form method="post" action="{{ url_for('delete_todo', todo_id=todo.id) }}">
+            <button type="submit">Delete Todo</button>
+        </form>
+    {% else %}
+        <p>Todo not found.</p>
+    {% endif %}
 </body>
 </html>

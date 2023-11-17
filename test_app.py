@@ -27,12 +27,14 @@ class MyTest(TestCase):
     def setUp(self):
         super().setUp()
         init_db()
-        
         self.db_session = SessionLocal()
         seed_users(self.db_session, UserModel, 20)  # Seed with 20 user instances for testing
         todo = TodoModel(title="Todo Title", description="A test todo")
         self.db_session.add(todo)
         self.db_session.commit()
+        self.todo_id = todo.id  # Store the ID of the new todo for use in tests
+        self.db_session.close()
+
 
     # Teardown the test database
     def tearDown(self):
@@ -45,21 +47,20 @@ class MyTest(TestCase):
             'title': 'Test Todo',
             'description': 'Test Description'
         }, follow_redirects=True)
+        print(response.data) 
         self.assertEqual(response.status_code, 200)
         self.assertIn('Test Todo', response.data.decode())
 
     # Test getting a todo
     def test_get_todo(self):
-        # Here you should ensure a todo with ID 1 exists
-        # For example, you could create one in the setUp method
-        response = self.client.get('/todos/1')
+        # Use the stored todo_id
+        response = self.client.get(f'/todos/{self.todo_id}')
         self.assertEqual(response.status_code, 200)
-        self.assertIn('Todo Title', response.data.decode())  # Replace with the actual todo title
-
+        self.assertIn('Todo Title', response.data.decode())
     # Test updating a todo
     def test_update_todo(self):
-        # Ensure there is a todo to update
-        response = self.client.post('/todos/update/1', data={
+        # Use the stored todo_id
+        response = self.client.post(f'/todos/update/{self.todo_id}', data={
             'title': 'Updated Todo',
             'description': 'Updated Description'
         }, follow_redirects=True)
@@ -68,10 +69,12 @@ class MyTest(TestCase):
 
     # Test deleting a todo
     def test_delete_todo(self):
-        # Ensure there is a todo to delete
-        response = self.client.post('/todos/delete/1', follow_redirects=True)
+        # Use the stored todo_id
+        response = self.client.post(f'/todos/delete/{self.todo_id}', follow_redirects=True)
         self.assertEqual(response.status_code, 200)
-        # Additional check can be performed to ensure the todo has been deleted
+        # Additional check to ensure the todo has been deleted
+        response = self.client.get(f'/todos/{self.todo_id}')
+        self.assertNotIn('Todo Title', response.data.decode()) # Additional check can be performed to ensure the todo has been deleted
 
 # This allows running the tests via the command line
 if __name__ == '__main__':

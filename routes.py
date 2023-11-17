@@ -5,7 +5,9 @@ from forms import TodoForm
 import os
 
 app = Flask(__name__)
-app.config['SECRET_KEY'] = os.urandom(24).hex()  # Set a random SECRET_KEY for CSRF protection
+secret_key = os.urandom(16)
+app.config['SECRET_KEY'] = secret_key.hex()
+  # Set a random SECRET_KEY for CSRF protection
 
 # Set up the session for the database
 session_factory = sessionmaker(bind=engine)
@@ -14,11 +16,12 @@ Session = scoped_session(session_factory)
 @app.route('/')
 def index():
     """Show all users and todos."""
+    form = TodoForm()
     session = Session()
     users = session.query(UserModel).all()
     todos = session.query(TodoModel).all()
     Session.remove()
-    return render_template('index.html', users=users, todos=todos)
+    return render_template('index.html', users=users, todos=todos, form=form)
 
 # User Routes
 @app.route('/users/<int:user_id>')

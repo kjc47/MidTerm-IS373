@@ -24,7 +24,7 @@
     <!-- Form for adding a new Todo -->
     <h2>Add a new Todo</h2>
     <form method="POST" action="/todos/create">
-        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
+        {{ form.hidden_tag() }}
         <label for="title">Title:</label>
         <input type="text" id="title" name="title" required>
         <input type="submit" value="Submit">
