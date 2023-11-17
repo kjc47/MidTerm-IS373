@@ -1,4 +1,5 @@
-# MidTerm-IS373
+# MidTerm-IS373 
+By Kevin Chavez, Nadzeya Kuzmitch, Robin Pierre
 First Make sure to use commands 
 echo $DATABASE_URL
 export DATABASE_URL='sqlite:///test_models.db' ### test database 
@@ -98,4 +99,86 @@ Part 5: Implementing Factories for Fake Data
     Introduction to Faker and Data Factories
         What is Faker?
             Faker is a Python library used to generate fake but realistic-looking data.
-... (111 lines left)
+Benefits of Using Data Factories
+        Provides a consistent and easy way to generate test data.
+        Helps in populating databases with data that mimics real-world scenarios without using sensitive real data.
+        Enhances the robustness of tests by using diverse and dynamic data sets.
+    Creating a User Factory Function
+        Factory Function Setup
+            user_factory example: 
+
+                from faker import Faker
+
+                fake = Faker()
+
+                def user_factory(UserModel):
+                    return UserModel(
+                        first_name=fake.first_name(),
+                        last_name=fake.last_name(),
+                        birth=fake.date_of_birth()
+                    )
+
+        fake = Faker(): Initializes a Faker instance to generate fake data.
+        user_factory(UserModel): A function that takes a UserModel class and returns an instance of it filled with fake data.
+        How Faker methods like fake.first_name() and fake.date_of_birth() are used to populate the fields.
+
+    Using the User Factory in the Application
+        Implementing the Factory
+             example of how to use the user_factory to create a user object:
+                new_user = user_factory(UserModel)
+Part 6: Seeding the Database
+    What is Database Seeding?
+        The process of populating a database with initial data.
+    Preparing the Seed Function
+        The seed_users Function:
+
+            from models import Session, UserModel
+            from factories import user_factory
+
+        def seed_users(number_of_users=10):
+            session = Session()
+            users = [userfactory(UserModel) for  in range(number_of_users)]
+            session.add_all(users)
+            session.commit()
+            session.close()
+            print(f"Seeded {number_of_users} users to the database.")
+
+    Break down the function and explain each part:
+        number_of_users=10: A default parameter that specifies the number of users to be created.
+        session = Session(): Initiates a new database session.
+        user_factory(UserModel): Uses the factory to generate user instances.
+        session.add_all(users): Adds all the user instances to the session.
+        session.commit(): Commits the transaction, saving the data to the database.
+        session.close(): Closes the session after the operation is complete.
+
+    Executing the Seed Script
+        Running the Seeding Process
+            This can be done directly within a Python shell or as part of an application's setup process.
+            Example:
+
+                python -c "from seed_script import seed_users; seed_users(20)"
+Part 7: Testing with Pytest
+    Overview of Pytest
+         Flexible and easy-to-use testing framework for Python. Highlight its features like simple syntax, powerful fixtures, and extensive plugin support.
+    Setting Up Test Environment
+        Creating a Pytest Fixture for Database Session:
+
+            import pytest
+            from models import Session, create_tables, UserModel, engine
+
+            @pytest.fixture(scope="module")
+            def db_session():
+                create_tables()  # Create tables in the test database
+                session = Session()  # Start a new session
+                yield session  # Use the session in tests
+                session.close()  # Close the session after tests
+                UserModel.table.drop(engine)  # Clean up the database
+
+    Writing Test Cases
+        Example of basic test function with Pytest using db_session 
+
+            def test_user_creation(db_session):
+            # Your test code here
+
+    Running Tests
+         using the pytest command
