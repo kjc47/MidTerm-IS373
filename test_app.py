@@ -25,9 +25,14 @@ class MyTest(TestCase):
 
     # Set up the test database and seed it
     def setUp(self):
+        super().setUp()
         init_db()
+        
         self.db_session = SessionLocal()
         seed_users(self.db_session, UserModel, 20)  # Seed with 20 user instances for testing
+        todo = TodoModel(title="Todo Title", description="A test todo")
+        self.db_session.add(todo)
+        self.db_session.commit()
 
     # Teardown the test database
     def tearDown(self):

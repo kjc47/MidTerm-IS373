@@ -5,9 +5,17 @@
     <title>Todo Details</title>
 </head>
 <body>
+    <!-- Display the title of the todo -->
     <h1>Todo: {{ todo.title }}</h1>
+
+    <!-- Display the description of the todo -->
     <p>Description: {{ todo.description }}</p>
+
+    <!-- Display the completion status of the todo -->
     <p>Status: {{ 'Completed' if todo.completed else 'Not Completed' }}</p>
-    <p>Created: {{ todo.created }}</p>
+
+    <!-- Display the creation date of the todo -->
+    <!-- If you store datetime in UTC and want to format it in a readable way -->
+    <p>Created: {{ todo.created.strftime('%Y-%m-%d %H:%M:%S') if todo.created else 'Unknown' }}</p>
 </body>
 </html>

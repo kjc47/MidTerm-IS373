@@ -5,10 +5,19 @@
     <title>User Details</title>
 </head>
 <body>
+    <!-- Display the full name of the user -->
     <h1>User: {{ user.full_name }}</h1>
+
+    <!-- Display the first name -->
     <p>First Name: {{ user.first_name }}</p>
+
+    <!-- Display the last name -->
     <p>Last Name: {{ user.last_name }}</p>
-    <p>Date of Birth: {{ user.birth }}</p>
-    <p>Account Created: {{ user.created }}</p>
+
+    <!-- Display the date of birth, format it if it's not None -->
+    <p>Date of Birth: {{ user.birth.strftime('%Y-%m-%d') if user.birth else 'Unknown' }}</p>
+
+    <!-- Display the account creation date, format it if it's not None -->
+    <p>Account Created: {{ user.created.strftime('%Y-%m-%d %H:%M:%S') if user.created else 'Unknown' }}</p>
 </body>
 </html>

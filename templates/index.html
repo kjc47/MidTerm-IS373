@@ -5,15 +5,19 @@
     <title>Dashboard</title>
 </head>
 <body>
+    <!-- User List -->
     <h1>Users</h1>
     <ul>
+        <!-- Loop through each user and display -->
         {% for user in users %}
             <li>{{ user.full_name }} - <a href="/users/{{ user.id }}">View</a></li>
         {% endfor %}
     </ul>
 
+    <!-- Todo List -->
     <h1>Todos</h1>
     <ul>
+        <!-- Loop through each todo and display -->
         {% for todo in todos %}
             <li>{{ todo.title }} - <a href="/todos/{{ todo.id }}">View</a></li>
         {% endfor %}
