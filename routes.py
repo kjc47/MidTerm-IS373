@@ -2,11 +2,16 @@ from flask import Flask, render_template, redirect, url_for, flash
 from models import UserModel, TodoModel, SessionLocal, engine
 from sqlalchemy.orm import scoped_session, sessionmaker
 from forms import TodoForm
+from flask_sqlalchemy import SQLAlchemy
+from flask_migrate import Migrate
 import os
 
 app = Flask(__name__)
 secret_key = os.urandom(16)
 app.config['SECRET_KEY'] = secret_key.hex()
+app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///models.db'
+db = SQLAlchemy(app)
+migrate = Migrate(app, db)
   # Set a random SECRET_KEY for CSRF protection
 
 # Set up the session for the database
