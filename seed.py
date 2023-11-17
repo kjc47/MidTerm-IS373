@@ -1,10 +1,9 @@
 # seed.py
-
-from models import Session, UserModel
+from models import SessionLocal, UserModel
 from factories import user_factory
 
-def seed_users(number_of_users=10):
-    session = Session()
+def seed_users(session, user_model_class, number_of_users=10):
+    session = SessionLocal()
     users = [user_factory(UserModel) for _ in range(number_of_users)]
     session.add_all(users)
     session.commit()

@@ -1,7 +1,9 @@
 from datetime import datetime
-from sqlalchemy import Column, DateTime, Integer, String, Boolean, create_engine, MetaData
-from sqlalchemy.orm import declarative_base, sessionmaker
+from sqlalchemy import create_engine, Column, Integer, String, DateTime, Boolean
+from sqlalchemy.orm import declarative_base
+from sqlalchemy.orm import sessionmaker
 import os
+
 
 Base = declarative_base()
 
@@ -43,7 +45,9 @@ class TodoModel(Base):
 DATABASE_URL = os.environ.get('DATABASE_URL', 'sqlite:///models.db')
 engine = create_engine(DATABASE_URL)
 
-Session = sessionmaker(bind=engine)
+SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
+def init_db():
+    Base.metadata.create_all(bind=engine)
 
 def create_tables():
     Base.metadata.create_all(engine)
@@ -65,7 +69,7 @@ if __name__ == "__main__":
     # seed_users()  # Uncomment to seed users
 
     # Print all user full names
-    session = Session()
+    session = SessionLocal()
     user_records = session.query(UserModel).all()
     for user in user_records:
         print(user.full_name)

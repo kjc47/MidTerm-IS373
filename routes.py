@@ -1,5 +1,5 @@
 from flask import Flask, request, jsonify, render_template, redirect, url_for
-from models import UserModel, TodoModel, Session, engine
+from models import UserModel, TodoModel, SessionLocal, engine
 from sqlalchemy.orm import sessionmaker, scoped_session
 
 app = Flask(__name__)
@@ -47,8 +47,8 @@ def create_todo():
 @app.route('/todos/update/<int:todo_id>', methods=['GET', 'POST'])
 def update_todo(todo_id):
     """Update an existing todo item."""
-    session = Session()
-    todo = session.query(TodoModel).get(todo_id)
+    session = SessionLocal()
+    todo = session.get(TodoModel, todo_id)
     if request.method == 'POST':
         if todo:
             todo.title = request.form['title']
@@ -62,7 +62,7 @@ def update_todo(todo_id):
 def delete_todo(todo_id):
     """Delete a todo item."""
     session = Session()
-    todo = session.query(TodoModel).get(todo_id)
+    todo = session.get(TodoModel, todo_id)
     if todo:
         session.delete(todo)
         session.commit()
@@ -73,7 +73,7 @@ def delete_todo(todo_id):
 def get_todo(todo_id):
     """Retrieve a single todo item."""
     session = Session()
-    todo = session.query(TodoModel).get(todo_id)
+    todo = Session.get(TodoModel, todo_id)
     Session.remove()
     return render_template('todo_view.html', todo=todo)
 

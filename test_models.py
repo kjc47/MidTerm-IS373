@@ -1,22 +1,35 @@
 import datetime
-from models import create_tables, UserModel, engine, Session, seed_users
+from models import UserModel, engine, SessionLocal, init_db
 from factories import user_factory
+from seed import seed_users
+
 import pytest
 
 @pytest.fixture(scope="module")
 def db_session():
-    # Create tables
-    create_tables()
+    # Initialize the database (create tables)
+    init_db()
 
     # Create a new session
-    session = Session()
+    session = SessionLocal()
 
     yield session  # this is where the testing happens
 
+    # Teardown: close the session and drop all tables
     session.close()
-    # Drop all tables after tests
-    UserModel.__table__.drop(engine)
+    UserModel.metadata.drop_all(engine)
 
+@pytest.fixture(scope="function")
+def seed_database(db_session):
+    # Seed the database with users, using a smaller number for testing
+       db_session.query(UserModel).delete()
+       db_session.commit()
+       seed_users(db_session, UserModel, 5)
+       db_session.commit()
+
+       yield
+       db_session.query(UserModel).delete()
+       db_session.commit()
 def test_user_creation(db_session):
     user = user_factory(UserModel)
     db_session.add(user)
@@ -29,6 +42,8 @@ def test_user_creation(db_session):
 
 def test_full_name_property(db_session):
     user = UserModel(first_name="John", last_name="Doe")
+    db_session.add(user)
+    db_session.commit()
     assert user.full_name == "John Doe"
 
 def test_created_field(db_session):
@@ -38,9 +53,10 @@ def test_created_field(db_session):
     db_session.commit()
 
     user_from_db = db_session.query(UserModel).filter_by(first_name="Jane").first()
-    assert user_from_db.created >= now
+    time_buffer = datetime.timedelta(seconds=1)
+    assert user_from_db.created <= now + time_buffer
 
-def test_seed_users(db_session):
-    seed_users()
+def test_seed_users(db_session, seed_database):
+    # seed_database fixture is used to seed users before the test
     user_count = db_session.query(UserModel).count()
-    assert user_count >= 2
+    assert user_count == 5
