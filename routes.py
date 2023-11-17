@@ -1,5 +1,5 @@
 from flask import Flask, request, jsonify, render_template, redirect, url_for
-from models import UserModel, TodoModel, Session, engine
+from models import UserModel, TodoModel, Session, engine, sessionmaker
 from sqlalchemy.orm import scoped_session
 
 app = Flask(__name__)
